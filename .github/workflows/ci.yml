@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - run: cargo fmt --all --check
+      # Denied rather than warned, so the generated code is held to what a
+      # consumer would hold it to -- several in this ecosystem deny pedantic.
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo test --all-targets
+      - run: cargo test --doc
+
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: bufbuild/buf-action@v1
+        with:
+          setup_only: true
+      # The output is committed and the plugin is pinned, so a diff means
+      # either the committed output is stale or the pin moved.
+      - run: ./scripts/regen.sh --check

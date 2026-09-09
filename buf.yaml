@@ -1,0 +1,8 @@
+# Vendored third-party protos, not a published module.
+#
+# `lint` and `breaking` are off: these files are copies of googleapis, so this
+# repo has no say in what they contain and no business reporting on them. What
+# it owns is the Rust that comes out of them.
+version: v2
+modules:
+  - path: proto

@@ -1,0 +1,24 @@
+# Regenerate with scripts/regen.sh, which is `buf generate` plus the removal
+# step -- generated output is committed, so a rename upstream would otherwise
+# leave the old file behind.
+#
+# Pinned to the same buffa the consumer links. The generated code targets a
+# specific runtime API, so a mismatched pair fails to compile rather than
+# degrading gracefully; keep this in lockstep with Cargo.toml.
+#
+# file_per_package=true gives one <package>.rs, which is what remote generation
+# supports and what the module tree in src/lib.rs mounts.
+version: v2
+plugins:
+  - remote: buf.build/anthropics/buffa:v0.9.1
+    out: src/generated
+    opt:
+      - file_per_package=true
+      - json=true
+      # The whole point of the crate. `google/rpc/status.proto` has an
+      # `Any` field and error_details.proto a `Duration`, and those types
+      # already exist in buffa-types -- so they are named there rather than
+      # generated a second time here. A consumer that linked both copies would
+      # have two unrelated `Timestamp` types and no way to pass one where the
+      # other is wanted.
+      - extern_path=.google.protobuf=::buffa_types::google::protobuf

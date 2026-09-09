@@ -1,0 +1,27 @@
+[package]
+name = "buffa-protos"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+description = "Third-party protos compiled for the buffa Rust protobuf runtime, starting with google.rpc."
+repository = "https://github.com/protoc-contrib/buffa-protos"
+keywords = ["buffa", "protobuf", "googleapis", "grpc"]
+categories = ["api-bindings"]
+
+[dependencies]
+# Keep in lockstep with buf.gen.yaml: the generated code targets a specific
+# runtime API, so a mismatched pair fails to compile rather than degrading.
+buffa = { version = "0.9.1", features = ["json"] }
+# `google.protobuf` is not generated here -- it is named through the
+# extern_path in buf.gen.yaml, so `Status.details` is the same `Any` a consumer
+# already has from this crate rather than a second, unrelated one.
+buffa-types = { version = "0.9.1", features = ["json"] }
+# Named by the json=true codegen, which emits Serialize/Deserialize alongside
+# the wire impls. Kept on rather than feature-gated: a Status that cannot be
+# rendered as JSON is not much use in an error path, and the consumer this
+# exists for generates its own types with json=true too.
+serde = { version = "1", features = ["derive"] }
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }

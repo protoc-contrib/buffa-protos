@@ -1,0 +1,8 @@
+edition = "2024"
+max_width = 100
+newline_style = "Unix"
+
+# The one generated file. Listed rather than globbed so that a second package
+# added here has to be listed too -- forgetting is not silent, since `cargo fmt`
+# would reformat it and the next regen revert that, dirtying the tree both ways.
+ignore = ["src/generated/google.rpc.rs"]
