@@ -64,7 +64,7 @@ single package-prefix mapping rather than one entry per type.
 ## Adding a package
 
 1. Vendor the `.proto` under `proto/`.
-2. Run `scripts/regen.sh`.
+2. Run `buf generate --clean`.
 3. Mount the emitted `<package>.rs` in `src/lib.rs`, and add it to the `ignore`
    list in `rustfmt.toml`.
 
@@ -74,15 +74,16 @@ in `buf.gen.yaml`, and it is what stops this crate shipping a second `Any`.
 Anything it imports from a package this crate does not carry has to be vendored
 alongside it.
 
-`scripts/regen.sh --check` fails if regenerating changes anything, which means
-either the committed output is stale or the pinned plugin moved. CI runs it.
+`--clean` matters: the output is committed, so a package renamed or removed
+upstream would otherwise leave a stale file behind that still compiles. CI
+regenerates and fails on any diff, which catches both that and a moved pin.
 
 ## Development
 
 ```bash
 nix develop        # cargo, rustc, clippy, rustfmt, buf
 cargo test
-./scripts/regen.sh --check
+buf generate --clean && git diff --exit-code -- src/generated
 ```
 
 `buf` is for regenerating only. The generated code is committed, so building

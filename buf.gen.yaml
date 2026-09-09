@@ -1,6 +1,6 @@
-# Regenerate with scripts/regen.sh, which is `buf generate` plus the removal
-# step -- generated output is committed, so a rename upstream would otherwise
-# leave the old file behind.
+# Regenerate with `buf generate --clean`. The output is committed, so a package
+# renamed or removed upstream would otherwise leave a stale file behind that
+# still compiles; --clean empties the output directory first.
 #
 # Pinned to the same buffa the consumer links. The generated code targets a
 # specific runtime API, so a mismatched pair fails to compile rather than

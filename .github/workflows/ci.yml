@@ -30,4 +30,5 @@ jobs:
           setup_only: true
       # The output is committed and the plugin is pinned, so a diff means
       # either the committed output is stale or the pin moved.
-      - run: ./scripts/regen.sh --check
+      - run: buf generate --clean
+      - run: git diff --exit-code -- src/generated
